@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ryan Jones — Mechanical Engineering Portfolio</title>
+  <meta name="description" content="Ryan Jones, Mechanical Engineering student at UT Arlington. CAD, FEA, 3D printing, Arduino, and materials testing projects.">
+  <meta property="og:title" content="Ryan Jones — Mechanical Engineering Portfolio">
+  <meta property="og:description" content="Mechanical design, simulation, and prototyping projects. UT Arlington, B.S. Mechanical Engineering.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#faf7f2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip" href="#work">Skip to content</a>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top">Ryan Jones</a>
+      <nav aria-label="Primary">
+        <a href="#work">Work</a>
+        <a href="#skills">Skills</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero wrap">
+      <p class="eyebrow">Mechanical Engineering · UT Arlington</p>
+      <h1>Mechanical design, simulation &amp; prototyping.</h1>
+      <p class="lead">I'm a mechanical engineering student who likes taking an idea from a SolidWorks model to a working, tested part. Below is a selection of my projects in CAD, FEA, 3D printing, embedded control, and materials testing.</p>
+      <div class="actions">
+        <a class="btn primary" href="https://www.linkedin.com/in/ryancjones311/" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn" href="https://github.com/ryancjones311" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn" href="assets/resume/Ryan-Jones-Resume.pdf" target="_blank" rel="noopener">Resume (PDF)</a>
+      </div>
+    </section>
+
+    <section id="work" class="wrap section">
+      <div class="section-head">
+        <h2>Selected work</h2>
+        <p>Seven projects. Click any card for details.</p>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <img class="media" src="assets/images/tennis-card.jpg" alt="" loading="lazy">
+          <div class="body">
+            <p class="meta">MAE 1351 · Summer 2025 · Team of 4</p>
+            <h3><a class="stretch" href="projects/tennis-ball-retrieval-vehicle.html">Autonomous Tennis-Ball Retrieval Vehicle</a></h3>
+            <p>A funnel-and-trapdoor vehicle that catches a dropped tennis ball, drives to a drop-off area, and releases the ball into the target.</p>
+            <ul><li>Team design with a 3D-printed funnel and trapdoor on a laser-cut wood base.</li><li>Servo chosen from a SolidWorks motion study; Arduino drives to the drop-off zone and releases the ball.</li></ul>
+            <p class="tags"><span>SolidWorks</span><span>3D Printing</span><span>Laser Cutting</span><span>Arduino</span></p>
+            <p class="more">View details →</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <img class="media" src="assets/images/pitch-card.jpg" alt="" loading="lazy">
+          <div class="body">
+            <p class="meta">MAE 3360 · Spring 2025 · Course project</p>
+            <h3><a class="stretch" href="projects/aircraft-pitch-control.html">Aircraft Pitch Dynamics &amp; Controller Analysis</a></h3>
+            <p>Modeling an aircraft whose pitch is unstable on its own, then analyzing the controlled response with and without sensor noise in MATLAB.</p>
+            <ul><li>Showed the uncontrolled pitch angle grows to about 2.5 rad within 2 s.</li><li>With the controller, the system has damping 0.73 and settles in 1.55 s; noise inside the system bandwidth gave 2.3× the pitch deviation of noise outside it.</li></ul>
+            <p class="tags"><span>MATLAB</span><span>Controls</span><span>Laplace Transforms</span><span>Noise Analysis</span></p>
+            <p class="more">View details →</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <img class="media" src="assets/images/fea-card.jpg" alt="" loading="lazy">
+          <div class="body">
+            <p class="meta">MAE 1351 · Summer 2025 · Homework 2</p>
+            <h3><a class="stretch" href="projects/fea-and-motion-simulation.html">Mechanical Components FEA &amp; Simulation</a></h3>
+            <p>SolidWorks modeling, a 4-cylinder engine motion study, bracket FEA, and steady-state thermal analysis.</p>
+            <ul><li>Ran FEA on a steel bracket and found where and why it fails: min FOS 0.17, 1,307 MPa peak stress vs 221 MPa yield.</li><li>Built a 4-cylinder engine motion study (velocity vs. time) and thermal studies on a rod inside tubes of different thickness.</li></ul>
+            <p class="tags"><span>SolidWorks</span><span>FEA</span><span>Motion Study</span><span>Thermal Analysis</span></p>
+            <p class="more">View details →</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <img class="media" src="assets/images/thermo-card.jpg" alt="" loading="lazy">
+          <div class="body">
+            <p class="meta">Fall 2026 · Simulated in Wokwi</p>
+            <h3><a class="stretch" href="projects/digital-thermometer-hygrometer.html">Digital Room Thermometer &amp; Hygrometer</a></h3>
+            <p>An Arduino room monitor that shows temperature, humidity, comfort status, daily high/low, and a real-time clock on a 20×4 LCD.</p>
+            <ul><li>Simulated and verified the full circuit and code in Wokwi before physical build.</li><li>Shows Cold/Good/Warm and Dry/Normal/Humid status, daily high/low, and the time and date, using I²C and a DHT22 sensor.</li></ul>
+            <p class="tags"><span>Arduino</span><span>Wokwi</span><span>Sensors</span><span>I²C</span></p>
+            <p class="more">View details →</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <img class="media" src="assets/images/alu-card.jpg" alt="" loading="lazy">
+          <div class="body">
+            <p class="meta">MAE 3181 · Fall 2026 · Lab report</p>
+            <h3><a class="stretch" href="projects/6061-t6-aluminum-testing.html">6061-T6 Aluminum Tensile Test</a></h3>
+            <p>Tensile test of an aluminum specimen to failure, with modulus, yield, ultimate, and fracture analysis.</p>
+            <ul><li>Pulled the specimen to failure on an MTS QTest/150 and measured strain directly with a clip-on extensometer.</li><li>Found E = 10,093.5 ksi, yield 39.6 ksi (0.2% offset), ultimate 48.1 ksi, and a ~45° shear fracture.</li></ul>
+            <p class="tags"><span>Universal Testing Machine</span><span>Material Testing</span><span>Excel</span><span>Stress–Strain</span></p>
+            <p class="more">View details →</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <img class="media" src="assets/images/gdt-card.jpg" alt="" loading="lazy">
+          <div class="body">
+            <p class="meta">MAE 1351 · Summer 2025 · Homework 4</p>
+            <h3><a class="stretch" href="projects/gdt-drawings-and-fits.html">Engineering Drawings, GD&amp;T &amp; Fits</a></h3>
+            <p>Part and assembly drawings with fully defined GD&amp;T and fit tables for hole, shaft, and maximum interference.</p>
+            <ul><li>Produced drawings of a variety of parts and assemblies with fully defined GD&amp;T.</li><li>Added a table to each assembly drawing listing hole tolerance, shaft tolerance, and maximum interference for running/sliding, locational transition, and force/shrink fits.</li></ul>
+            <p class="tags"><span>GD&amp;T</span><span>Engineering Drawings</span><span>Limits &amp; Fits</span><span>SolidWorks</span></p>
+            <p class="more">View details →</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <img class="media" src="assets/images/lego-card.jpg" alt="" loading="lazy">
+          <div class="body">
+            <p class="meta">MAE 1107 · Fall 2024 · Team of 5</p>
+            <h3><a class="stretch" href="projects/lego-line-following-robot.html">Line-Following Rod Retrieval Robot</a></h3>
+            <p>A LEGO EV3 robot that follows a white line, picks up rods, and delivers them to a drop-off box past a tunnel.</p>
+            <ul><li>Built and coded a LEGO Mindstorms EV3 robot in a team of five over four class days.</li><li>Debugged line-following and a lift that blocked the distance sensor, then completed the course.</li></ul>
+            <p class="tags"><span>LEGO EV3</span><span>Sensors</span><span>Control Logic</span><span>Teamwork</span></p>
+            <p class="more">View details →</p>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section id="skills" class="band">
+      <div class="wrap section">
+        <div class="section-head"><h2>Skills &amp; tools</h2></div>
+        <div class="skills">
+          <div><h3>CAD &amp; design</h3><p>SolidWorks, GD&amp;T, DFM/DFA, prototyping, material testing, 3D printing</p></div>
+          <div><h3>Engineering analysis</h3><p>Finite element analysis (FEA), MATLAB, statics, dynamics, motion study</p></div>
+          <div><h3>Instrumentation &amp; data</h3><p>LabVIEW, Microsoft Excel</p></div>
+          <div><h3>Programming</h3><p>C, C++, Arduino</p></div>
+        </div>
+        <p class="cert"><strong>Certification:</strong> Certified SolidWorks Associate (CSWA) — Mechanical Design</p>
+      </div>
+    </section>
+
+    <section id="about" class="wrap section narrow">
+      <div class="section-head"><h2>About</h2></div>
+      <p>I'm pursuing a B.S. in Mechanical Engineering at The University of Texas at Arlington (expected December 2027). Coursework includes Mechanics of Materials, Thermodynamics, Manufacturing Processes, Mechanical Design, and Engineering Measurements.</p>
+      <p>I'm looking for internship and co-op opportunities in mechanical design, product development, and testing.</p>
+    </section>
+
+    <section id="contact" class="wrap section narrow contact">
+      <h2>Let's work on something together.</h2>
+      <p>The fastest way to reach me is on LinkedIn.</p>
+      <div class="actions">
+        <a class="btn primary" href="https://www.linkedin.com/in/ryancjones311/" target="_blank" rel="noopener">Message on LinkedIn</a>
+        <!-- TO ADD EMAIL: <a class="btn" href="mailto:you@example.com">Email</a> -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <span>© 2026 Ryan Jones · Arlington, TX</span>
+    <span><a href="https://www.linkedin.com/in/ryancjones311/" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://github.com/ryancjones311" target="_blank" rel="noopener">GitHub</a></span>
+  </footer>
+</body>
+</html>

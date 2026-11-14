@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autonomous Tennis-Ball Retrieval Vehicle — Ryan Jones</title>
+<meta name="description" content="A funnel-and-trapdoor vehicle that catches a dropped tennis ball, drives to a drop-off area, and releases the ball into the target.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css"></head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="nav"><div class="wrap nav-inner"><a class="brand" href="../index.html">Ryan Jones</a>
+  <nav aria-label="Primary"><a href="../index.html#work">Work</a><a href="../index.html#skills">Skills</a><a href="../index.html#about">About</a><a href="../index.html#contact">Contact</a></nav></div></header>
+  <main id="main" class="wrap detail">
+    <a class="back" href="../index.html#work">← All projects</a>
+    <p class="meta">MAE 1351 · Summer 2025 · Team of 4</p>
+    <h1>Autonomous Tennis-Ball Retrieval Vehicle</h1>
+    <p class="tags"><span>SolidWorks</span><span>3D Printing</span><span>Laser Cutting</span><span>Arduino</span></p>
+    <p class="lead">Our team built a vehicle that catches a dropped tennis ball in a funnel, drives to a designated drop-off area, and releases the ball into the target zone. This was the final design project for MAE 1351.</p>
+    <dl class="facts"><div><dt>Course</dt><dd>MAE 1351 Intro to Engineering Design, UT Arlington</dd></div><div><dt>Team</dt><dd>Team 9 “Blue Bouncer” (4 students)</dd></div><div><dt>Tools</dt><dd>SolidWorks, motion study, 3D printing, laser cutting, Arduino</dd></div><div><dt>Result</dt><dd>Caught the ball and delivered it to the drop-off area</dd></div></dl>
+    <div class="hero-media"><figure class="vid"><video controls preload="metadata" playsinline poster="../assets/images/tennis-delivery-poster.jpg"><source src="../assets/video/tennis-delivery.mp4" type="video/mp4">Your browser does not support video.</video><figcaption>The finished robot catching the ball and delivering it to the drop-off area.</figcaption></figure></div>
+    <div class="prose"><h2>Design concept</h2><p>We started from a past project shown in class: a funnel that catches the ball, a mechanism that drives forward, and a trapdoor that releases the ball into a tray. We kept that idea but made two changes:</p><ul><li>Placed the trapdoor <strong>higher in the funnel</strong>, which gives the ball more momentum and lets it travel further after release, so the robot can finish the task without touching the tray.</li><li>Made the base from <strong>laser-cut wood</strong> instead of 3D printing it.</li></ul><div class="gallery g2"><figure class=""><img src="../assets/images/tennis-cad.jpg" alt="SolidWorks model of the funnel and tube assembly." loading="lazy"><figcaption>SolidWorks model of the funnel and tube assembly.</figcaption></figure><figure class=""><img src="../assets/images/tennis-prototype.jpg" alt="Assembled prototype." loading="lazy"><figcaption>Assembled prototype.</figcaption></figure></div><h2>Motion study and actuator choice</h2><p>A SolidWorks motion study of the trapdoor showed a smooth, controlled, slow motion: the light part has to rotate about <strong>100°</strong> to block the ball as it falls into the funnel, then rotate back to let it out. That requirement points to a positional servo, which is small, lightweight, controlled, and accurate enough to fit the required angle and sit comfortably in the slot on the tube. We used an SG90 micro servo.</p><div class="gallery g2"><figure class=""><img src="../assets/images/tennis-motion-study.jpg" alt="SolidWorks motion study and velocity graph for the trapdoor." loading="lazy"><figcaption>SolidWorks motion study and velocity graph for the trapdoor.</figcaption></figure><figure class="vid"><video controls preload="metadata" playsinline poster="../assets/images/servo-test-poster.jpg"><source src="../assets/video/servo-test.mp4" type="video/mp4">Your browser does not support video.</video><figcaption>Bench test of the servo gate with the internals visible.</figcaption></figure></div><h2>Fabrication</h2><p>The funnel and tube parts were 3D printed and the base was cut from wood on a laser cutter. Parts were fastened with hardware from Home Depot (3/8″-16 × 1″ zinc-plated hex bolts, nuts and washers) plus other bolts, washers and clamps we had on hand.</p><div class="gallery g2"><figure class=""><img src="../assets/images/tennis-printed-part.jpg" alt="A 3D-printed part." loading="lazy"><figcaption>A 3D-printed part.</figcaption></figure><figure class=""><img src="../assets/images/tennis-laser-cutting.jpg" alt="Laser-cutting the wood base." loading="lazy"><figcaption>Laser-cutting the wood base.</figcaption></figure></div><h2>Electronics and control</h2><p>An Arduino Uno drives four TT gear motors through an L298N motor driver, powered by a 5×AA battery holder, and controls the SG90 servo that opens the gate. The program is a timed, open-loop sequence:</p><ul><li>Hold the gate closed at 90° and wait 5 s for the servo to settle.</li><li>Drive forward at full PWM for 10.5 s (about 6 ft, tuned by testing).</li><li>Stop, wait 2 s, then sweep the servo from 90° to 180° in 1° steps to release the ball.</li></ul><details class="code"><summary>View the Arduino code</summary><pre><code>#include &lt;Servo.h&gt;
+
+// Motor Pins (2 motors = 1 per wheel)
+const int ena = 5;  // Left motor speed (PWM)
+const int in1 = 6;  // Left motor control 1
+const int in2 = 7;  // Left motor control 2
+const int in3 = 8;  // Right motor control 1
+const int in4 = 9;  // Right motor control 2
+const int enb = 10; // Right motor speed (PWM)
+
+// Servo Setup
+Servo ballGateServo;
+const int servoPin = 13;
+const int HOLD_ANGLE = 90;    // Position to hold ball
+const int RELEASE_ANGLE = 180; // Position to release ball
+
+void setup() {
+  // Initialize Motor Pins
+  pinMode(ena, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
+  pinMode(enb, OUTPUT);
+  pinMode(in3, OUTPUT);
+  pinMode(in4, OUTPUT);
+
+  // Initialize Servo
+  ballGateServo.attach(servoPin);
+  ballGateServo.write(HOLD_ANGLE); // Close gate initially
+  delay(5000); // Let servo stabilize
+
+  // --- MOVEMENT SEQUENCE ---
+  // 1. Move forward ~6 feet (adjust delay through testing)
+  moveForward(255); // Full speed
+  delay(10500); 
+  
+  // 2. Stop and release ball
+  stopMotors();
+  delay(2000);
+  releaseBall();
+
+}
+
+void loop() {} // Everything happens in setup()
+
+// ---- 2-MOTOR CONTROL FUNCTIONS ----
+void moveForward(int speed) {
+  // Left motor forward
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
+  analogWrite(ena, speed);
+  
+  // Right motor forward
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+  analogWrite(enb, speed);
+}
+
+void stopMotors() {
+  // Brake both motors
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, LOW);
+}
+
+// ---- SERVO CONTROL ----
+void releaseBall() {
+  for (int angle = HOLD_ANGLE; angle &lt;= RELEASE_ANGLE; angle++) {
+    ballGateServo.write(angle);
+    delay(15); // Smooth movement
+  }
+}</code></pre></details><h2>Bill of materials</h2><ul><li>Arduino Uno Rev3</li><li>SG90 micro servo motor</li><li>4 × TT DC motors (3–6 V) with wheels</li><li>L298N dual H-bridge motor driver</li><li>5×AA battery holder with leads</li><li>Jumper wires</li><li>3D-printed parts and laser-cut wood base (all modeled in SolidWorks)</li><li>Bolts, washers and clamps</li></ul><h2>Engineering drawings</h2><p>The report includes an assembly drawing and detail drawings for every fabricated part, with GD&amp;T.</p><div class="gallery g2"><figure class=""><img src="../assets/images/tennis-assembly-drawing.png" alt="Assembly drawing with bill of materials." loading="lazy"><figcaption>Assembly drawing with bill of materials.</figcaption></figure><figure class=""><img src="../assets/images/tennis-bracket-drawing.png" alt="Detail drawing of the bracket." loading="lazy"><figcaption>Detail drawing of the bracket.</figcaption></figure></div></div>
+    <nav class="pn" aria-label="More projects"><span></span><a href="aircraft-pitch-control.html">Aircraft Pitch Dynamics &amp; Controller Analysis →</a></nav>
+  </main>
+  <footer class="wrap footer"><span>© 2026 Ryan Jones · Arlington, TX</span><span><a href="https://www.linkedin.com/in/ryancjones311/" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://github.com/ryancjones311" target="_blank" rel="noopener">GitHub</a></span></footer>
+  <script src="../js/site.js"></script>
+</body></html>

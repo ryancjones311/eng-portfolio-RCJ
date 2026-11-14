@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Digital Room Thermometer & Hygrometer — Ryan Jones</title>
+<meta name="description" content="An Arduino room monitor that shows temperature, humidity, comfort status, daily high/low, and a real-time clock on a 20×4 LCD.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css"></head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="nav"><div class="wrap nav-inner"><a class="brand" href="../index.html">Ryan Jones</a>
+  <nav aria-label="Primary"><a href="../index.html#work">Work</a><a href="../index.html#skills">Skills</a><a href="../index.html#about">About</a><a href="../index.html#contact">Contact</a></nav></div></header>
+  <main id="main" class="wrap detail">
+    <a class="back" href="../index.html#work">← All projects</a>
+    <p class="meta">Fall 2026 · Simulated in Wokwi</p>
+    <h1>Digital Room Thermometer &amp; Hygrometer</h1>
+    <p class="tags"><span>Arduino</span><span>Wokwi</span><span>Sensors</span><span>I²C</span></p>
+    <p class="lead">A room monitor built around an Arduino Uno. Before building it physically, I wired and tested the whole circuit and program in the Wokwi simulator to verify connection locations and that everything worked.</p>
+    <dl class="facts"><div><dt>Hardware</dt><dd>Arduino Uno, DHT22 sensor, real-time clock (DS1307 in simulation, DS3231 for the real build), 20×4 I²C LCD, half-size breadboard</dd></div><div><dt>Tools</dt><dd>Wokwi simulator; Arduino C++ with the DHT, RTClib and LiquidCrystal_I2C libraries</dd></div><div><dt>Status</dt><dd>Circuit and code verified in simulation</dd></div></dl>
+    <div class="hero-media"><figure class=""><img src="../assets/images/thermo-wokwi.jpg" alt="The Wokwi simulation: Arduino Uno, DHT22, real-time clock, and 20×4 I²C LCD on a half breadboard." loading="lazy"><figcaption>The Wokwi simulation: Arduino Uno, DHT22, real-time clock, and 20×4 I²C LCD on a half breadboard.</figcaption></figure></div>
+    <div class="prose"><h2>What it does</h2><ul><li><strong>Row 1:</strong> temperature in °F with a status of Cold (below 64°F), Good, or Warm (above 75°F).</li><li><strong>Row 2:</strong> relative humidity with a status of Dry (below 30%), Normal, or Humid (above 60%).</li><li><strong>Row 3:</strong> the day’s high and low temperature, reset automatically when the date changes.</li><li><strong>Row 4:</strong> time in 12-hour format and the date, from the real-time clock.</li></ul><h2>How it’s built</h2><ul><li>The DHT22’s data line is on digital pin 2, and the sensor is read for humidity and temperature (in °F).</li><li>The real-time clock and LCD share the Arduino’s I²C bus (A4 = SDA, A5 = SCL); a half-size breadboard distributes 5 V and ground.</li><li>If the clock isn’t running, it is set to the compile time. Readings that fail (NaN) show an error instead of bad data.</li></ul><p>The simulator only offers a DS1307 clock, so the physical build will use a DS3231 with a small code change.</p><p><a class="btn" href="https://wokwi.com/projects/477896179542832129" target="_blank" rel="noopener">Open the live simulation on Wokwi</a></p><details class="code"><summary>View the Arduino code</summary><pre><code>#include &lt;Wire.h&gt;
+#include &lt;LiquidCrystal_I2C.h&gt;
+#include &lt;DHT.h&gt;
+#include &lt;RTClib.h&gt;
+
+#define DHTPIN 2
+#define DHTTYPE DHT22
+
+// Comfort Zone Thresholds (Standard Indoor Room Levels in Fahrenheit)
+const float TEMP_LOW = 64.0;   // Below 64°F is too cold
+const float TEMP_HIGH = 75.0;  // Above 75°F is too warm
+const int HUMID_LOW = 30;      
+const int HUMID_HIGH = 60;     
+
+DHT dht(DHTPIN, DHTTYPE);
+LiquidCrystal_I2C lcd(0x27, 20, 4); 
+RTC_DS1307 rtc;
+
+float hiTemp = -999.0;
+float loTemp = 999.0;
+int lastDay = -1; 
+
+void setup() {
+  dht.begin();
+  lcd.init();
+  lcd.backlight();
+  
+  if (!rtc.begin()) {
+    lcd.print(&quot;RTC Error!&quot;);
+    while (1);
+  }
+
+  if (!rtc.isrunning()) {
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  }
+  
+  lcd.clear(); 
+}
+
+void loop() {
+  DateTime now = rtc.now();
+  float humidity = dht.readHumidity();
+  // Passing &#x27;true&#x27; reads the temperature directly in Fahrenheit
+  float temperature = dht.readTemperature(true); 
+
+  if (now.day() != lastDay) {
+    hiTemp = -999.0;
+    loTemp = 999.0;
+    lastDay = now.day();
+  }
+
+  if (!isnan(temperature) &amp;&amp; !isnan(humidity)) {
+    if (temperature &gt; hiTemp || hiTemp == -999.0) hiTemp = temperature;
+    if (temperature &lt; loTemp || loTemp == 999.0) loTemp = temperature;
+  }
+
+  // --- ROW 1: Temp &amp; Status ---
+  lcd.setCursor(0, 0);
+  if (isnan(temperature)) {
+    lcd.print(&quot;T: Error            &quot;);
+  } else {
+    lcd.print(&quot;T:&quot;);
+    lcd.print(temperature, 1);
+    lcd.write(223); // Degree symbol
+    lcd.print(&quot;F &quot;);
+    
+    if (temperature &lt; TEMP_LOW) {
+      lcd.print(&quot;[Cold]   &quot;);
+    } else if (temperature &gt; TEMP_HIGH) {
+      lcd.print(&quot;[Warm]   &quot;);
+    } else {
+      lcd.print(&quot;[Good]   &quot;);
+    }
+  }
+
+  // --- ROW 2: Humidity &amp; Status ---
+  lcd.setCursor(0, 1);
+  if (isnan(humidity)) {
+    lcd.print(&quot;H: Error            &quot;);
+  } else {
+    lcd.print(&quot;H:&quot;);
+    lcd.print(humidity, 1);
+    lcd.print(&quot;% &quot;);
+    
+    if (humidity &lt; HUMID_LOW) {
+      lcd.print(&quot;[Dry]    &quot;);
+    } else if (humidity &gt; HUMID_HIGH) {
+      lcd.print(&quot;[Humid]  &quot;);
+    } else {
+      lcd.print(&quot;[Normal] &quot;);
+    }
+  }
+
+  // --- ROW 3: Daily Records (Hi / Lo in Fahrenheit) ---
+  lcd.setCursor(0, 2);
+  if (hiTemp == -999.0 || loTemp == 999.0) {
+    lcd.print(&quot;Rec: Calculating... &quot;);
+  } else {
+    lcd.print(&quot;Hi:&quot;);
+    lcd.print(hiTemp, 1);
+    lcd.write(223);
+    lcd.print(&quot;F Lo:&quot;);
+    lcd.print(loTemp, 1);
+    lcd.write(223);
+    lcd.print(&quot;F &quot;);
+  }
+
+  // --- ROW 4: Live Time &amp; Date (Perfect 20-character fit) ---
+  lcd.setCursor(0, 3);
+  
+  int hour12 = now.hour();
+  bool isPM = (hour12 &gt;= 12);
+  
+  if (hour12 == 0) {
+    hour12 = 12; 
+  } else if (hour12 &gt; 12) {
+    hour12 = hour12 - 12; 
+  }
+
+  // Print Time
+  lcd.print(hour12);
+  lcd.print(&#x27;:&#x27;);
+  if (now.minute() &lt; 10) lcd.print(&#x27;0&#x27;);
+  lcd.print(now.minute());
+  
+  if (isPM) {
+    lcd.print(&quot; pm&quot;);
+  } else {
+    lcd.print(&quot; am&quot;);
+  }
+
+  // Spacing calculation to hit exactly 20 characters
+  if (hour12 &lt; 10) {
+    lcd.print(&quot;   &quot;); 
+  } else {
+    lcd.print(&quot;  &quot;);  
+  }
+  
+  // Print Date (MM/DD/YYYY)
+  if (now.month() &lt; 10) lcd.print(&#x27;0&#x27;); 
+  lcd.print(now.month()); 
+  lcd.print(&#x27;/&#x27;);
+  if (now.day() &lt; 10) lcd.print(&#x27;0&#x27;); 
+  lcd.print(now.day()); 
+  lcd.print(&#x27;/&#x27;);
+  lcd.print(now.year());
+
+  delay(1000); 
+}</code></pre></details></div>
+    <nav class="pn" aria-label="More projects"><a href="fea-and-motion-simulation.html">← Mechanical Components FEA &amp; Simulation</a><a href="6061-t6-aluminum-testing.html">6061-T6 Aluminum Tensile Test →</a></nav>
+  </main>
+  <footer class="wrap footer"><span>© 2026 Ryan Jones · Arlington, TX</span><span><a href="https://www.linkedin.com/in/ryancjones311/" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://github.com/ryancjones311" target="_blank" rel="noopener">GitHub</a></span></footer>
+  <script src="../js/site.js"></script>
+</body></html>
